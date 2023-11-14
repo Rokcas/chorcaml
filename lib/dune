@@ -1,2 +1,4 @@
 (library
- (name chorcaml))
+    (name ppx_chor)
+    (kind ppx_rewriter)
+    (libraries ppxlib))
