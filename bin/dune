@@ -1,4 +1,4 @@
 (executable
-    (public_name chorcaml)
-    (name main)
-    (libraries ppx_chor ppxlib))
+ (public_name chorcaml)
+ (name main)
+ (libraries ppx_chor ppxlib))

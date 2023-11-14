@@ -1,1 +1,3 @@
-let () = print_string [%chor "MY_VAR"]
+let () =
+  let%chor a = "Magic" in
+  print_string a
