@@ -1,2 +1,3 @@
 (library
- (name chorcaml))
+ (name chorcaml)
+ (libraries higher))
