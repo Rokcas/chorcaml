@@ -1,18 +1,19 @@
 open Functional
 
 module Freer = struct
-  module type S = sig
-    type 'a boxt
+  module type S = functor (Box : sig type 'a t end) -> sig
+    type 'a boxt = 'a Box.t
     type _ freer =
     | Pure : 'a -> 'a freer
     | Impure : 'a boxt * ('a -> 'b freer) -> 'b freer
     
     include MonadS with type 'a t = 'a freer
-    val impure : 'a boxt -> ('a -> 'b t) -> 'b t
-    val toFreer : 'a boxt -> 'a t 
+    val impure : 'a boxt -> ('a -> 'b freer) -> 'b freer
+    val toFreer : 'a boxt -> 'a freer 
+    val ( let* ) : 'a t -> ('a -> 'b t) -> 'b t
   end
 
-  module Make (Box : sig type 'a t end) : S = struct
+  module Make : S = functor (Box : sig type 'a t end) -> struct
     type _ freer =
     | Pure : 'a -> 'a freer
     | Impure : 'a Box.t * ('a -> 'b freer) -> 'b freer
@@ -38,6 +39,8 @@ module Freer = struct
       match fr with
       | Pure a -> f a
       | Impure (eff, k) -> impure eff (fun x -> k x >>= f)
+
+    let ( let* ) = (>>=)
   end
 
   module type HandlerS = sig
@@ -56,7 +59,7 @@ module Freer = struct
     val interpFreer : 'a t -> 'a mont
   end
 
-  module MakeInterp (Fr : S) (Hand : HandlerS with type 'a boxt = 'a Fr.boxt) : InterpS = struct
+  module MakeInterp (Box : sig type 'a t end) (Fr : (module type of Make (Box))) (Hand : HandlerS with type 'a boxt = 'a Fr.boxt) : InterpS = struct
     type 'a boxt = 'a Fr.boxt
     type 'a mont = 'a Hand.mont
     type 'a t = 'a Fr.t
