@@ -4,11 +4,13 @@ end
 
 (* TODO: turn this module creation into a macro *)
 type locA
+
 module LocA : LocS = struct
   type t = locA
 end
 
 type locB
+
 module LocB : LocS = struct
   type t = locA
 end
@@ -17,6 +19,5 @@ end
 type ('a, 'b) constrVal = Val of 'a
 type ('a, 'b) locVal = ('a, (module LocS with type t = 'b)) constrVal
 
-let wrap (x: 'a) : ('a, 'b) locVal = Val x
-
-let unwrap (Val x: ('a, 'b) locVal) : 'a = x
+let wrap (x : 'a) : ('a, 'b) locVal = Val x
+let unwrap (Val x : ('a, 'b) locVal) : 'a = x

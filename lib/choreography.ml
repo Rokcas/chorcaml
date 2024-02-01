@@ -1,29 +1,33 @@
 open Location
 open Freer
+open Functional
 
-module BaseChoreo : sig 
+module BaseChoreo : sig
   type _ t =
-  | Local : ('a, 'b) locVal -> ('a * 'b) t
-  | Trans : ('a, 'b) locVal -> ('a * 'c) t
+    | Local : ('a, 'b) locVal -> ('a, 'b) locVal t
+    | Trans : ('a, 'b) locVal -> ('a, 'c) locVal t
 end = struct
   type _ t =
-  | Local : ('a, 'b) locVal -> ('a * 'b) t
-  | Trans : ('a, 'b) locVal -> ('a * 'c) t
+    | Local : ('a, 'b) locVal -> ('a, 'b) locVal t
+    | Trans : ('a, 'b) locVal -> ('a, 'c) locVal t
 end
 
 module Choreo = Freer.Make (BaseChoreo)
 
-let locally x = Choreo.toFreer x
-let _ = BaseChoreo.Local (wrap 1) |> locally
+module Handler :
+  Freer.HandlerS
+    with type 'a boxt = 'a BaseChoreo.t
+     and type 'a mont = 'a Functional.Identity.t = struct
+  type 'a boxt = 'a BaseChoreo.t
+  type 'a mont = 'a Functional.Identity.t
 
-let example1 =
-  Choreo.pure 1
+  include Functional.Identity
 
-let example2 =
-  Choreo.pure 2
-  
-(* module Handler : Freer.HandlerS = struct
-  type 'a boxt = BaseChoreo.t
-  type 'a mont = 
-  (* let handler : 'a boxt -> 'a mont *)
-end *)
+  (* Handler does nothing interesting for now *)
+  let handler : type a. a boxt -> a mont =
+   fun x ->
+    let open BaseChoreo in
+    match x with Local v -> pure v | Trans v -> pure (wrap (unwrap v))
+end
+
+module Interpreter = Freer.MakeInterp (Choreo) (Handler)
