@@ -65,7 +65,10 @@ module Freer = struct
   end
 
   module MakeInterp (Fr : S) (Hand : HandlerS with type 'a boxt = 'a Fr.boxt) :
-    InterpS = struct
+    InterpS
+      with type 'a t = 'a Fr.t
+       and type 'a boxt = 'a Fr.boxt
+       and type 'a mont = 'a Hand.mont = struct
     type 'a boxt = 'a Fr.boxt
     type 'a mont = 'a Hand.mont
     type 'a t = 'a Fr.t
