@@ -1,11 +1,19 @@
 module type LocS = sig
   type t
+  type 'a mont
+  type locUuid = int
+
+  val uuid : locUuid
+  (* val send : 'a -> locUuid -> unit mont
+  val recv : locUuid -> 'a mont *)
 end
 
 (* 'b determines the location of the value *)
-type ('a, 'b) constrVal = Val of 'a
 type 'a locMod = (module LocS with type t = 'a)
-type ('a, 'b) locVal = ('a, 'b locMod) constrVal
+type ('a, 'b) locVal = LocVal of 'a * 'b locMod
 
-let wrap (x : 'a) : ('a, 'b) locVal = Val x
-let unwrap (Val x : ('a, 'b) locVal) : 'a = x
+let wrap (x : 'a) (l : (module LocS with type t = 'b)) : ('a, 'b) locVal =
+  LocVal (x, l)
+
+let unwrap_val (LocVal (x, _)) = x
+let unwrap_loc (LocVal (_, m)) = m

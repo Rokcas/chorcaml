@@ -19,7 +19,7 @@
  (name chorcaml)
  (synopsis "A short synopsis")
  (description "A longer description")
- (depends ocaml dune)
+ (depends ocaml dune lwt)
  (tags
   (topics "to describe" your project)))
 
