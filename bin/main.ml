@@ -1,6 +1,7 @@
 open Chorcaml.Choreography
 open Chorcaml.Functional
 open Chorcaml.Location
+open Chorcaml.Handlers.Local
 
 (* TODO: turn this module creation into a macro *)
 type locA
@@ -35,7 +36,7 @@ let _ =
     app part y
   in
   let open Identity in
-  Interpreter.interpFreer chor1 |> fmap (fun x -> unwrap_val x |> print_int)
+  LocalInterpreter.interpFreer chor1 |> fmap (fun x -> unwrap_val x |> print_int)
 
 let _ =
   let chor2 =
@@ -47,4 +48,4 @@ let _ =
     app f x'
   in
   let open Identity in
-  Interpreter.interpFreer chor2 |> fmap (fun x -> unwrap_val x |> print_int)
+  LocalInterpreter.interpFreer chor2 |> fmap (fun x -> unwrap_val x |> print_int)

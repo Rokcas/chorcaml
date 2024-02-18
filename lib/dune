@@ -1,3 +1,5 @@
 (library
  (name chorcaml)
  (libraries lwt unix))
+
+(include_subdirs qualified)
