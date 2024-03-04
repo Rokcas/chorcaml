@@ -57,10 +57,10 @@ let make_handler (type a) (loc : a locMod) : (module TcpHandlerS) =
           if other_location l then none
           else return (wrap ((unwrap_val f) (unwrap_val v)) l)
       | BaseChoreo.Comm (l, v) ->
-          if other_location l then            
+          if other_location l then
             let* () = Utils.create_sender (unwrap_val v) (uuid loc) (uuid l) in
             MaybeLwt.none
-          else 
+          else
             let* res = Utils.create_receiver (uuid loc) (uuid (unwrap_loc v)) in
             wrap res l |> return
   end in

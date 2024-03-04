@@ -33,7 +33,8 @@ let chor =
   app f x'
 
 let _ =
-  print_endline "Please enter the location to execute the choreography for (a or b)";
+  print_endline
+    "Please enter the location to execute the choreography for (a or b)";
   let loc = read_line () in
   let interpretation =
     match loc with

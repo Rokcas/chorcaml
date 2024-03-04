@@ -18,11 +18,16 @@ module type MonadS = sig
   val ( >>= ) : 'a t -> ('a -> 'b t) -> 'b t
 end
 
-module Identity : MonadS = struct
+module Identity : sig
+  include MonadS
+
+  val unwrap : 'a t -> 'a
+end = struct
   type 'a t = Id of 'a
 
   let map f (Id x) = Id (f x)
   let return x = Id x
   let ( <*> ) (Id f) (Id x) = Id (f x)
   let ( >>= ) (Id x) f = f x
+  let unwrap (Id x) = x
 end
