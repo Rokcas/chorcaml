@@ -25,18 +25,18 @@ module Freer = struct
     type 'a t = 'a freer
     type 'a boxt = 'a Box.t
 
-    let pure a = Pure a
+    let return a = Pure a
     let impure f k = Impure (f, k)
-    let toFreer eff = impure eff pure
+    let toFreer eff = impure eff return
 
-    let rec fmap f fr =
+    let rec map f fr =
       match fr with
-      | Pure a -> pure (f a)
-      | Impure (eff, k) -> impure eff (fun x -> fmap f (k x))
+      | Pure a -> return (f a)
+      | Impure (eff, k) -> impure eff (fun x -> map f (k x))
 
     let rec ( <*> ) fr ap =
       match fr with
-      | Pure a -> fmap a ap
+      | Pure a -> map a ap
       | Impure (eff, k) -> impure eff (fun x -> k x <*> ap)
 
     let rec ( >>= ) fr f =
@@ -77,7 +77,7 @@ module Freer = struct
 
     let rec interpFreer fr =
       match fr with
-      | Fr.Pure a -> pure a
+      | Fr.Pure a -> return a
       | Fr.Impure (eff, k) -> handler eff >>= fun x -> interpFreer (k x)
   end
 end

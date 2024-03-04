@@ -11,8 +11,9 @@ doc: "https://url/to/documentation"
 bug-reports: "https://github.com/username/reponame/issues"
 depends: [
   "ocaml"
-  "dune" {>= "3.6"}
+  "dune" {>= "3.14"}
   "lwt"
+  "lwt_unix"
   "odoc" {with-doc}
 ]
 build: [
